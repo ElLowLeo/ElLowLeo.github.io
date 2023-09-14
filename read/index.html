@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>loading - lowleo</title>
+  <link rel="icon" type="image/png" href="https://cdn.glitch.global/e139c581-aca2-472e-8a1e-a32117e31919/duck.png?v=1694307982825">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleName = urlParams.get('article').toLowerCase();
+    
+    const button = document.getElementById('invertColors');
+    const isWhiteMode = localStorage.getItem('whiteMode') === 'true';
+    const filterValue = isWhiteMode ? 'none' : 'invert(100%)';
+    button.textContent = isWhiteMode ? 'modo claro' : 'modo escuro';
+    document.documentElement.style.filter = filterValue;
+
+    const fileUrl = `articles/${articleName}.md`;
+    const converter = new showdown.Converter();
+    fetch(fileUrl)
+      .then(response => response.text())
+      .then(markdownText => {
+        const html = converter.makeHtml(markdownText)
+        document.getElementsByTagName('main')[0].innerHTML = html;
+        hljs.highlightAll();
+    })
+
+    document.getElementById('articleTitle').innerHTML = `${articleName.toUpperCase()}<span id="d">.</span>MD`;
+    document.title = `${articleName} - lowleo`;
+  });
+
+  function invertColors() {
+    const inverse = document.documentElement.style.filter === 'none';
+    document.documentElement.style.filter = inverse ? 'invert(100%)' : 'none';
+    localStorage.setItem('whiteMode', !inverse);
+    document.getElementById('invertColors').textContent = inverse ? 'modo escuro' : 'modo claro';
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <h1><span id="d">low</span><span style="cursor:pointer" onclick="window.location.href='/'">leo</span></h1> <button onclick="window.location.href='donate'"><b>doe</b></button> <button onclick="window.location.href='/'"><b>página inicial</b></button>
+  </header>
+  <center><br><h1 id="articleTitle"></h1><br><button id="invertColors" onclick="invertColors();">modo claro</button><hr></center>
+  <main>
+  </main>
+</body>
+</html>
